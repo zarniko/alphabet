@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>alphabet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #2e00ff;
+            --accent: #00ff41;
+            --text: #ffffff;
+            --transition-speed: 0.4s;
+        }
+
+        /* Automatic Theme Variations */
+        .theme-0 { --bg: #2e00ff; --accent: #00ff41; --text: #ffffff; }
+        .theme-1 { --bg: #ff4d00; --accent: #7000ff; --text: #ffffff; }
+        .theme-2 { --bg: #ff00ff; --accent: #ffff00; --text: #2e00ff; }
+        .theme-3 { --bg: #00ff41; --accent: #2e00ff; --text: #ffffff; }
+        .theme-4 { --bg: #7000ff; --accent: #ff4d00; --text: #ffffff; }
+        .theme-5 { --bg: #ffff00; --accent: #ff00ff; --text: #2e00ff; }
+        .theme-6 { --bg: #00ffff; --accent: #ff0000; --text: #2e00ff; }
+        .theme-7 { --bg: #ff0000; --accent: #00ff41; --text: #ffffff; }
+        .theme-8 { --bg: #2e00ff; --accent: #ffffff; --text: #00ff41; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            transition: background-color var(--transition-speed) ease;
+            touch-action: none;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+        }
+
+        .pane {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .list-pane {
+            padding: 0;
+        }
+
+        .alphabet-grid {
+            position: relative;
+            width: 45vw;
+            height: 45vw;
+            max-width: 700px;
+            max-height: 700px;
+            transition: all 0.5s ease;
+        }
+
+        /* Layout-specific styles */
+        .alphabet-grid.layout-grid {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.2vh;
+        }
+
+        .alphabet-grid.layout-circle {
+            display: block;
+        }
+
+        .grid-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.2vw;
+        }
+
+        .letter-btn {
+            width: clamp(40px, 6vw, 80px);
+            height: clamp(40px, 6vw, 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(1.2rem, 2.5vw, 3rem);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease, color 0.4s ease;
+            user-select: none;
+            font-family: inherit;
+            font-weight: inherit;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .layout-circle .letter-btn {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            font-size: 1.8rem;
+        }
+
+        .letter-btn:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+            z-index: 20;
+        }
+
+        .layout-circle .letter-btn:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 20;
+        }
+
+        .letter-btn.active {
+            color: var(--accent);
+            transform: scale(1.5);
+            z-index: 10;
+        }
+
+        .layout-circle .letter-btn.active {
+            transform: translate(-50%, -50%) scale(1.5);
+            z-index: 10;
+        }        /* Toggle Controls */
+        .layout-toggle {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .toggle-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--text);
+            opacity: 0.3;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-dot:hover {
+            opacity: 0.6;
+        }
+
+        .toggle-dot.active {
+            opacity: 1;
+            background-color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .display-pane {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .display-letter {
+            font-size: clamp(5rem, 20vw, 22rem);
+            color: var(--accent);
+            line-height: 1;
+            text-align: center;
+            user-select: none;
+            margin: 0;
+        }
+
+        /* Navigation feedback */
+        .pane:active {
+            opacity: 0.9;
+        }
+
+        .letter-btn:active {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1.1fr 0.9fr;
+            }
+            .alphabet-grid {
+                width: 95vw;
+                height: 95vw; /* Maintain aspect ratio for spiral */
+                max-width: none;
+                max-height: none;
+            }
+            .alphabet-grid.layout-grid {
+                height: auto;
+                gap: 0.5vw;
+            }
+            .grid-row {
+                gap: 0.5vw;
+            }
+            .letter-btn {
+                font-size: 8vw !important;
+                width: 13vw;
+                height: 13vw;
+            }
+            .layout-spiral .letter-btn {
+                width: 15vw;
+                height: 15vw;
+                font-size: 10vw;
+            }
+            .display-letter {
+                font-size: 25vw !important;
+            }
+            .display-pane {
+                gap: 0.5rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        .list-pane::-webkit-scrollbar {
+            width: 8px;
+        }
+        .list-pane::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        .list-pane::-webkit-scrollbar-thumb {
+            background: var(--accent);
+        }
+    </style>
+</head>
+<body class="theme-0">
+    <main>
+        <section class="pane list-pane" id="prev-btn">
+            <div class="alphabet-grid layout-grid" id="alphabet-grid">
+                <!-- Letters generated by JS -->
+            </div>
+        </section>
+        <section class="pane display-pane" id="next-btn">
+            <h1 class="display-letter" id="display-letter-upper">A</h1>
+            <h1 class="display-letter" id="display-letter-lower">a</h1>
+        </section>
+    </main>
+
+    <nav class="layout-toggle">
+        <button class="toggle-dot active" data-layout="grid"></button>
+        <button class="toggle-dot" data-layout="circle"></button>
+    </nav>
+
+    <script>
+        const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+        const grid = document.getElementById('alphabet-grid');
+        const displayUpper = document.getElementById('display-letter-upper');
+        const displayLower = document.getElementById('display-letter-lower');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const toggleDots = document.querySelectorAll('.toggle-dot');
+        let currentIndex = 0;
+        let currentLayout = 'grid';
+
+        function getCircleCoords(i, n) {
+            const isMobile = window.innerWidth <= 768;
+            const baseRadius = isMobile ? 30 : 32;
+            const zigzagAmount = isMobile ? 4 : 3.5; // Distance to push/pull
+            const radius = baseRadius + (i % 2 === 0 ? zigzagAmount : -zigzagAmount);
+            
+            const angleStep = (2 * Math.PI) / n;
+            const angle = i * angleStep - (Math.PI / 2); // Start from top
+            
+            return {
+                x: 50 + Math.cos(angle) * radius,
+                y: 50 + Math.sin(angle) * radius
+            };
+        }
+
+        function updateDisplay(index) {
+            currentIndex = index;
+            const letter = alphabet[index];
+            
+            displayUpper.textContent = letter.toUpperCase();
+            displayLower.textContent = letter.toLowerCase();
+            document.body.className = `theme-${index % 9}`;
+
+            document.querySelectorAll('.letter-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+        }
+
+        function navigate(direction) {
+            if (direction === 'next') {
+                updateDisplay((currentIndex + 1) % alphabet.length);
+            } else {
+                updateDisplay((currentIndex - 1 + alphabet.length) % alphabet.length);
+            }
+        }
+
+        // Event Listeners for Panes
+        prevBtn.addEventListener('click', (e) => {
+            // Only navigate if we didn't click a letter button or toggle dot
+            if (!e.target.closest('.letter-btn') && !e.target.closest('.layout-toggle')) {
+                navigate('prev');
+            }
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+            if (!e.target.closest('.letter-btn') && !e.target.closest('.layout-toggle')) {
+                navigate('next');
+            }
+        });
+
+        function initGrid() {
+            grid.innerHTML = '';
+            grid.className = `alphabet-grid layout-${currentLayout}`;
+
+            if (currentLayout === 'grid') {
+                const rowPattern = [3, 4, 6, 6, 4, 3];
+                let letterIndex = 0;
+                rowPattern.forEach(count => {
+                    const row = document.createElement('div');
+                    row.className = 'grid-row';
+                    for (let i = 0; i < count; i++) {
+                        if (letterIndex >= alphabet.length) break;
+                        const btn = createLetterBtn(letterIndex);
+                        row.appendChild(btn);
+                        letterIndex++;
+                    }
+                    grid.appendChild(row);
+                });
+            } else {
+                alphabet.forEach((_, i) => {
+                    const btn = createLetterBtn(i);
+                    const coords = getCircleCoords(i, alphabet.length);
+                    btn.style.left = `${coords.x}%`;
+                    btn.style.top = `${coords.y}%`;
+                    grid.appendChild(btn);
+                });
+            }
+            updateDisplay(currentIndex);
+        }
+
+        function createLetterBtn(index) {
+            const btn = document.createElement('button');
+            btn.className = 'letter-btn';
+            btn.textContent = alphabet[index];
+            btn.addEventListener('click', () => updateDisplay(index));
+            return btn;
+        }
+
+        toggleDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const layout = dot.getAttribute('data-layout');
+                if (layout === currentLayout) return;
+                
+                currentLayout = layout;
+                toggleDots.forEach(d => d.classList.toggle('active', d === dot));
+                initGrid();
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (currentLayout === 'spiral') initGrid();
+        });
+
+        initGrid();
+
+        // Keyboard Support
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                updateDisplay((currentIndex - 1 + alphabet.length) % alphabet.length);
+            }
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                updateDisplay((currentIndex + 1) % alphabet.length);
+            }
+        });
+
+        // Set Initial State
+        updateDisplay(0);
+    </script>
+</body>
+</html>
