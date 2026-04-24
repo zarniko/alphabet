@@ -145,31 +145,35 @@
             z-index: 10;
         }        /* Toggle Controls */
         .layout-toggle {
-            position: fixed;
+            position: absolute;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 15px;
+            justify-content: center;
+            align-items: center;
             z-index: 100;
         }
 
-        .toggle-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
+        .toggle-btn {
+            width: 20px;
+            height: 20px;
             background-color: var(--text);
-            opacity: 0.3;
+            opacity: 0.5;
             cursor: pointer;
             border: none;
             transition: all 0.3s ease;
         }
 
-        .toggle-dot:hover {
-            opacity: 0.6;
+        .toggle-btn.is-circle {
+            border-radius: 50%;
         }
 
-        .toggle-dot.active {
+        .toggle-btn.is-square {
+            border-radius: 3px;
+        }
+
+        .toggle-btn:hover {
             opacity: 1;
             background-color: var(--accent);
             transform: scale(1.2);
@@ -262,8 +266,7 @@
     </main>
 
     <nav class="layout-toggle">
-        <button class="toggle-dot active" data-layout="grid"></button>
-        <button class="toggle-dot" data-layout="circle"></button>
+        <button id="layout-toggle-btn" class="toggle-btn is-circle" aria-label="Toggle Layout"></button>
     </nav>
 
     <script>
@@ -273,7 +276,7 @@
         const displayLower = document.getElementById('display-letter-lower');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
-        const toggleDots = document.querySelectorAll('.toggle-dot');
+        const toggleBtn = document.getElementById('layout-toggle-btn');
         let currentIndex = 0;
         let currentLayout = 'grid';
 
@@ -365,15 +368,15 @@
             return btn;
         }
 
-        toggleDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const layout = dot.getAttribute('data-layout');
-                if (layout === currentLayout) return;
-                
-                currentLayout = layout;
-                toggleDots.forEach(d => d.classList.toggle('active', d === dot));
-                initGrid();
-            });
+        toggleBtn.addEventListener('click', () => {
+            if (currentLayout === 'grid') {
+                currentLayout = 'circle';
+                toggleBtn.className = 'toggle-btn is-square';
+            } else {
+                currentLayout = 'grid';
+                toggleBtn.className = 'toggle-btn is-circle';
+            }
+            initGrid();
         });
 
         window.addEventListener('resize', () => {
